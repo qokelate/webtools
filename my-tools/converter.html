@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Data Converter by sma11case</title>
+</head>
+
+<body>
+    <br />
+    <font font-size='28px'>
+        时间秒:<input id='time1_input' onchange="time1_changed(event)" style='line-height: 28px; font-size: 18px;' />
+        毫秒:<input id='time2_input' onchange="time2_changed(event)" style='line-height: 28px; font-size: 18px;' />
+        结果:<span id='time1_result' style='word-break: break-all; font-size: 24px; display: inline-block;'></span>
+    </font>
+
+    <BR />
+    <font font-size='28px'>
+        十进制:<input id='int_input1' onchange="int_changed(event)" style='line-height: 28px; font-size: 18px;' />
+        大端:<input id='hex_input1' onchange="hex1_changed(event)" style='line-height: 28px; font-size: 18px;' />
+        小端:<input id='hex_input2' onchange="hex2_changed(event)" style='line-height: 28px; font-size: 18px;' />
+    </font>
+
+    <br />
+    <script>
+        Date.prototype.format = function (format) {
+            var o = {
+                "M+": this.getMonth() + 1, //month
+                "d+": this.getDate(), //day
+                "h+": this.getHours(), //hour
+                "m+": this.getMinutes(), //minute
+                "s+": this.getSeconds(), //second
+                "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+                "S": this.getMilliseconds() //millisecond
+            };
+            if (/(y+)/.test(format)) {
+                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            }
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(format)) {
+                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k])
+                        .length));
+                }
+            }
+            return format;
+        };
+
+        function strftime(timestamp_ms, format1) {
+            if (!format1) format1 = 'yyyy-MM-dd hh:mm:ss';
+            const date1 = new Date(timestamp_ms);
+            return date1.format(format1);
+        }
+
+        function time1_changed(e) {
+            time2_input.value = time1_input.value + '000';
+            const time1 = strftime(Number(time2_input.value));
+            time1_result.innerHTML = time1;
+        }
+
+        function time2_changed(e) {
+            const tmp1 = time2_input.value;
+            const time1 = strftime(Number(tmp1));
+            time1_result.innerHTML = time1;
+            time1_input.value = tmp1.substr(0, tmp1.length - 3);
+        }
+
+
+
+
+
+
+
+        const bswap_hexstring = (string) => {
+            const result = [];
+            let len = string.length - 2;
+            while (len >= 0) {
+                result.push(string.substr(len, 2));
+                len -= 2;
+            }
+            return result.join('');
+        }
+
+        function int_changed(e) {
+            const hexString = Number(int_input1.value).toString(16);
+            hex_input1.value = '0x' + hexString;
+            hex_input2.value = '0x' + bswap_hexstring(hexString);
+        }
+
+        function hex1_changed(e) {
+            var hexString = hex_input1.value;
+            if (hexString.startsWith('0x')) hexString = hexString.substr(2);
+            const hexString2 = bswap_hexstring(hexString);
+            const intString = parseInt(hexString, 16);
+            int_input1.value = intString;
+            hex_input2.value = '0x' + hexString2;
+        }
+
+        function hex2_changed(e) {
+            var hexString = hex_input2.value;
+            if (hexString.startsWith('0x')) hexString = hexString.substr(2);
+            const hexString2 = bswap_hexstring(hexString);
+            const intString = parseInt(hexString2, 16);
+            int_input1.value = intString;
+            hex_input1.value = '0x' + hexString2;
+        }
+
+        time2_input.value = new Date().getTime();
+        time2_changed();
+
+        int_input1.value = time1_input.value;
+        int_changed();
+    </script>
+</body>
+
+</html>
+

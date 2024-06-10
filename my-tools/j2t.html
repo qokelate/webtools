@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>JSON Formatter</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body,
+        .wrap {
+            width: 100%;
+            height: 100%;
+            font-size: 18px;
+        }
+
+        .wrap {
+            display: flex;
+        }
+
+        textarea {
+            flex: 2;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        .preview-wrap {
+            flex: 2;
+            padding: 20px;
+            line-height: 1.0;
+            font-size: 18px;
+        }
+
+        #indent {
+            width: 100px;
+            height: 20px;
+            font-size: 18px;
+            padding: 5px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <textarea cols="30" rows="10" id="textarea"></textarea>
+        <div class="preview-wrap">
+            <input type="number" id="indent" value="2">
+            <button class="copy-btn" onclick="copy()">复制</button>
+            <pre class="preview" id="preview"></pre>
+        </div>
+    </div>
+    <script>
+        function oninput(event) {
+            try {
+                eval('window.tmp_textarea_input1 =' + event.target.value);
+                val = JSON.stringify(window.tmp_textarea_input1, null, indent.value * 1);
+                preview.innerText = val;
+            } catch (error) {
+                preview.innerText = error;
+            }
+        }
+
+        function copy() {
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            const range = document.createRange();
+            range.selectNodeContents(preview);
+            selection.addRange(range);
+            window.setTimeout(function () {
+                document.execCommand('copy');
+            });
+        }
+        textarea.oninput = oninput;
+        textarea.onchange = oninput;
+        indent.oninput = function (event) {
+            oninput({
+                target: textarea
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>web text</title>
+</head>
+
+<body>
+  <textarea id="source1" cols="130" rows="20" onchange="transfer(this.value)"></textarea>
+  <div>
+    <button onclick="click2()" style="padding: 10px 20px;">复制文本</button>
+    <button onclick="click1()" style="padding: 10px 20px;">复制URL</button>
+    <textarea id='textarea1' cols="130" rows="20" style='border-style: none; resize: none; color: black; word-break: break-all; display:block;'></textarea>
+  </div>
+  <script>
+    function click1() {
+      textarea1.select();
+      document.execCommand('copy');
+    }
+
+    function click2() {
+      source1.select();
+      document.execCommand('copy');
+    }
+
+    function transfer(val) {
+      const text = encodeURIComponent(val);
+      const url = window.location.protocol + "//" + window.location.host + window.location.pathname + "?text="+text;
+      textarea1.value = url;
+      console.log(url);
+    }
+
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var paramValue = url.searchParams.get("text");
+    source1.value = paramValue;
+    transfer(source1.value);
+    // debugger
+  </script>
+</body>
+
+</html>

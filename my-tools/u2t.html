@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>HexString to Plain Text by sma11case</title>
+</head>
+
+<body>
+  <textarea cols="130" rows="20" onchange="changed(event)"></textarea>
+  <div>
+    <button onclick="click1()" style="padding: 10px 20px;">复制结果</button>
+    <span id='resultInput' style='word-break: break-all; display:block;'></span>
+    <span id='urldecode' style='word-break: break-all; display:block;'></span>
+    <textarea id='textarea1' cols="1" rows="1"
+      style='border-style: none; resize: none; color: white; word-break: break-all; display:block;'></textarea>
+  </div>
+  <script>
+    function unicodeToChar(text) {
+      return text.replace(/\\[Uu][\dA-F]{4}/gi,
+        function (match) {
+          return String.fromCharCode(parseInt(match.replace(/\\[Uu]/g, ''), 16));
+        });
+    }
+
+    function unicodeToChar2(val) {
+      return unescape(val.replace(/&#x/g, '%u').replace(/;/g, ''));
+    }
+
+    function hexCharCodeToStr(hexCharCodeStr) {
+      var trimedStr = hexCharCodeStr.trim();
+      var rawStr =
+        trimedStr.substr(0, 2).toLowerCase() === "0x" ?
+        trimedStr.substr(2) :
+        trimedStr;
+      var len = rawStr.length;
+      if (len % 2 !== 0) {
+        alert("Illegal Format ASCII Code!");
+        return "";
+      }
+      var curCharCode;
+      var resultStr = [];
+      for (var i = 0; i < len; i = i + 2) {
+        curCharCode = parseInt(rawStr.substr(i, 2), 16); // ASCII Code Value
+        resultStr.push(String.fromCharCode(curCharCode));
+      }
+      return resultStr.join("");
+    }
+
+    function click1() {
+      textarea1.select();
+      document.execCommand('copy');
+      // window.setTimeout(function () {
+      //   if (window.getSelection) {
+      //     window.getSelection().removeAllRanges();
+      //   } else if (document.selection) {
+      //     document.selection.empty();
+      //   }
+      // });
+    }
+
+    function changed(e) {
+      var result = unicodeToChar(e.target.value);
+      var result_str = result;
+      // console.log(result_str)
+
+
+      var html = '============== Unicode Decode: ' + result.length + 'bytes ===============<p>'
+      //    html += '<font color="red">'
+      //    html += result_str + '<p>'
+      //    html += '</font>'
+      resultInput.innerHTML = html;
+
+      var resultInputChild = document.createElement('font');
+      resultInputChild.color = 'red';
+      resultInputChild.innerText = result_str;
+      resultInput.appendChild(resultInputChild);
+      resultInput.appendChild(document.createElement('p'));
+
+      textarea1.value = result_str;
+
+      var result = unicodeToChar2(e.target.value);
+      var result_str = result;
+
+
+      var html = '============== XML Decode: ' + result.length + 'bytes ===============<p>'
+      // html += '<font color="red">'
+      // html += result_urldec + '<p>'
+      // html += '</font>'
+      urldecode.innerHTML = html
+
+      //var result_str = 'gC%2BeuZB4GzIcnZuBj%2Bvqew%3D%3D11'
+      var resultInputChild = document.createElement('font');
+      resultInputChild.color = 'red';
+      resultInputChild.innerText = result_str;
+      urldecode.appendChild(resultInputChild);
+      urldecode.appendChild(document.createElement('p'));
+    }
+  </script>
+</body>
+
+</html>

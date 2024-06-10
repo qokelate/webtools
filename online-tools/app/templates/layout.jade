@@ -1,0 +1,24 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    meta(name='viewport', content='width=device-width')
+    meta(name='description', content=page.metadata.description)
+    title
+      = page.title == locals.name ? locals.name : page.title + ' Online'
+    script.
+      if (location.hostname != 'localhost') {
+      }
+    link(rel='stylesheet', href='css/style.css')
+    script(src='https://code.jquery.com/jquery-1.10.1.min.js')
+  body
+    #header
+      h1
+        a(href='index.html')
+            = locals.name
+    #body
+      block body
+        != page.html
+    #footer
+      | &copy; 2015-2017 Online Tools

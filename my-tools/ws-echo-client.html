@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+    <title>WebSocket Echo Client</title>
+    <style>
+        ::placeholder {
+            color:#333;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body style="color:black; font-size:18px;">
+    <h1>
+        WebSocket Client
+        <button onclick="open_in_tab()" style="color:black; font-size:24px;">open in new tab</button>
+    </h1> 
+
+    <p>
+        <input id="server" type="text" value="ws://echo.websocket.org/" size="40" style="color:black; font-size:14px;">
+        <button onclick="openSocket()" style="color:black; font-size:14px;">Open</button>
+        <button onclick="closeSocket()" style="color:black; font-size:14px;">Close</button>
+    </p>
+
+    <p>
+        <p><textarea cols="130" rows="20" id="message" placeholder='text message or binary message, like [31 32 33]'></textarea></p>
+        <button onclick="sendText()" style="color:black; font-size:14px;">Send Text</button>
+        <button onclick="sendBinary()" style="color:black; font-size:14px;">Send Binary</button>
+        <button onclick="clearLog()" style="color:black; font-size:14px;">Clear</button>
+    </p>
+
+    <ul id="messages"></ul>
+
+    <script>
+        var ws = undefined;
+        var log_idx = 0;
+
+        function openSocket() {
+            const url = document.getElementById('server').value;
+            log(`opening <font color='blue'>${url}</font>`);
+
+            ws = new WebSocket(url);
+            ws.binaryType = 'arraybuffer'; // default is 'blob'
+
+            ws.onopen = function () {
+                log('open success.');
+                sessionStorage.echoServer = url;
+            };
+
+            ws.onclose = function () {
+                log('connect closed.');
+            };
+
+            ws.onmessage = function (e) {
+                if (e.data instanceof Blob) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        const data = new Uint8Array(e.target.result);
+                        log(`received blob: <font color='red'>${data.length}</font> bytes, <font color='red'>${encodehexstring(data)}</font>`);
+                    };
+                    reader.readAsArrayBuffer(e.data);
+                } else if (e.data instanceof ArrayBuffer) {
+                    const data = new Uint8Array(e.data);
+                    log(`received binary: <font color='red'>${data.length}</font> bytes, <font color='red'>${encodeHexString(data)}</font>`);
+                } else {
+                    log(`received text: <font color='red'>${new TextEncoder().encode(e.data).length}</font> bytes, <font color='red'>${e.data}</font>`);
+                }
+            };
+
+            ws.onerror = function (e) {
+                log(`error: <font color='red'>${e}</font>`);
+            };
+        }
+
+        function closeSocket() {
+            log('closing');
+            ws.close();
+        }
+
+        function sendText() {
+            const message = document.getElementById('message').value;
+            log(`sending text: <font color='red'>${new TextEncoder().encode(message).length}</font> bytes, text: <font color='red'>${message}</font>`);
+            ws.send(message);
+        }
+
+        function sendBinary() {
+            const message = decodeHexString(document.getElementById('message').value);
+            log(`sending binary: <font color='red'>${message.length}</font> bytes, data: <font color='red'>${encodeHexString(message)}</font>`);
+            ws.send(new Uint8Array(message).buffer);
+        }
+
+        function decodeHexString(text) {
+            text = text.replace(/[^0-9a-fA-F]+/g, '');
+            if (text.length % 2 === 1) {
+                text = '0' + text;
+            }
+            var data = [];
+            for (var i = 0, len = text.length; i < len; i += 2) {
+                data.push(parseInt(text.substr(i, 2), 16));
+            }
+            return data;
+        }
+
+        function encodeHexString(data) {
+            var bytes = [];
+            for (var i = 0, len = data.length; i < len; i++) {
+                var value = data[i];
+                bytes[i] = value.toString(16);
+                if (value < 16) {
+                    bytes[i] = '0' + bytes[i];
+                }
+            }
+            return bytes.join(' ');
+        }
+
+        function clearLog(message) {
+            log_idx = 0;
+            document.getElementById('messages').innerHTML = '';
+        }
+
+        function log(message) {
+            var li = document.createElement('li');
+            li.innerHTML = `${log_idx}. ${message}`;
+            li.style = "color:black; font-size:20px;";
+            document.getElementById('messages').appendChild(li);
+            log_idx += 1;
+        }
+
+        function open_in_tab()
+        {
+            window.open(window.location.href);
+        }
+
+        if (sessionStorage.echoServer) {
+            document.getElementById('server').value = sessionStorage.echoServer;
+        }
+    </script>
+</body>
+
+</html>

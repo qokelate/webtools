@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JSON to OC code</title>
+</head>
+
+<body>
+  <textarea id="input" cols="130" rows="20" onchange="changed()"></textarea>
+  <div>
+    <button onclick="click1()" style="padding: 10px 20px;">复制结果</button>
+  </div>
+  <textarea cols="130" rows="20" id="resultBox"></textarea>
+  <div>
+  </div>
+  <script>
+      function changed() {
+        let val = input.value;
+        if (!val.trim()) return;
+        try {
+          val = JSON.parse(val);
+		  
+          let result = parse(val);
+          result = result.replace(/\s*,\s*$/,'');
+          resultBox.value = result;
+        } catch (error) {
+          resultBox.value = 'JSON格式错误';
+        }
+      }
+	  
+    function click1() {
+      resultBox.select();
+      document.execCommand('copy');
+    }
+
+    function empty(num) {
+      return new Array(num).join(' ');
+    }
+
+    function parse(data, index = 0) {
+      if (null == data)
+      {
+        return `[NSNull null],`;
+      }
+
+      let str = '';
+      let type = typeof (data);
+      switch (type) {
+        case 'string':
+          str = `@"${data}",`;
+          break;
+        case 'boolean':
+          str = `@(${data}),`;
+          break;
+        case 'number':
+          str = `@${data},`;
+          break;
+        case 'object':
+          if (data.constructor === Array) {
+            str += '@[\n';
+            index += 2;
+            data.forEach(item => {
+              str += empty(index);
+              str += parse(item, index);
+              str += '\n';
+            })
+            str += empty(index);
+            str += '],';
+          } else {
+            str += '@{\n';
+            index += 2;
+            Object.entries(data).forEach(item => {
+              let [key, value] = item;
+              str += empty(index);
+              str += `@"${key}":${parse(value,index)}\n`;
+            });
+            str += empty(index);
+            str += '},';
+          }
+          break;
+      }
+      return str;
+    }
+  </script>
+</body>
+
+</html>

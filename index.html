@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>web tools</title>
+	<!-- import CSS -->
+	<!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+	<link rel="stylesheet" href="./index.css">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html,
+		body,
+		#app,
+		.el-tabs,
+		.el-tab-pane {
+			width: 100%;
+			height: 100%;
+		}
+
+		.el-tabs__header {
+			margin: 0;
+		}
+
+		.el-tabs__content {
+			height: calc(100% - 40px);
+		}
+
+		.el-tabs__item {
+			font-size: 16px;
+		}
+
+		.el-tabs__nav {
+			display: flex !important;
+			flex-wrap: wrap !important;
+		}
+		/* .el-tabs__item:hover{ //moveover
+			color: #28cccc;
+		} */
+		.el-tabs__item.is-active {
+			color: red;
+			font-size: 18px;
+			border-bottom: 2px solid red;
+			background-color: beige;
+		}
+		.el-tabs__active-bar {
+			display: none !important;
+		}
+		.el-tabs__item.is-top {
+			padding-left: 20px !important;
+			padding-right: 20px !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<el-tabs @tab-click="handleClick">
+			<el-tab-pane v-for="(item,index) in list" :key="index" :label="item.title">
+				<iframe :id="item.title" src="about:blank" width="100%" height="100%" frameborder="0"></iframe>
+			</el-tab-pane>
+		</el-tabs>
+	</div>
+
+
+	<!-- import Vue before Element -->
+	<!-- <script src="https://unpkg.com/vue/dist/vue.js"></script> -->
+	<!-- import JavaScript -->
+	<!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+
+	<!-- import Vue before Element -->
+	<script src="./vue.js"></script>
+	<!-- import JavaScript -->
+	<script src="./index.js"></script>
+
+
+	<script>
+		const vue1 = new Vue({
+			el: '#app',
+			mounted: function () {
+				const data1 = this.$data;
+				for (var a = 0; a < data1.list.length; ++a) {
+					if (data1.list[a].lazy) continue;
+
+					const key1 = data1.list[a].title;
+					this.show_tab(key1);
+				}
+			},
+			methods: {
+				handleClick: function (tab, event) {
+					this.show_tab(tab.label);
+				},
+
+				show_tab: function (key1) {
+					const data1 = this.$data;
+
+					for (var a = 0; a < data1.list.length; ++a) {
+						if (data1.list[a].title != key1) continue;
+						if (document.getElementById(key1).src != 'about:blank') continue;
+
+						const url = data1.list[a].url;
+						// console.log('load: '+ url);
+						document.getElementById(key1).src = url;
+					}
+				}
+			},
+			data: function () {
+				return {
+					list: [{
+							title: 'b2t',
+							url: './my-tools/b2t.html'
+						},
+						{
+							title: 't2b',
+							url: './my-tools/t2b.html'
+						},
+						{
+							title: "u2t",
+							url: "./my-tools/u2t.html"
+						},
+						{
+							title: "JSON格式化",
+							url: "./my-tools/j2t.html"
+						},
+						{
+							title: "数制转换",
+							url: "./my-tools/converter.html",
+						},
+						{
+							lazy: 1,
+							title: "URL编码",
+							url: "./online-tools/url_encode.html"
+						},
+						{
+							lazy: 1,
+							title: "URL解码",
+							url: "./online-tools/url_decode.html"
+						},
+						{
+							lazy: 1,
+							title: "Base64编码",
+							url: "./online-tools/base64_encode.html"
+						},
+						{
+							lazy: 1,
+							title: "Base64解码",
+							url: "./online-tools/base64_decode.html"
+						},
+						{
+							title: "jsondiff",
+							url: "./jsondiff/index.html",
+						},
+						{
+							title: "JS运行器",
+							url: "./my-tools/jsrunner.html"
+						},
+						{
+							title: "json2oc",
+							url: "./my-tools/j2c.html"
+						},
+						{
+							lazy: 1,
+							title: "xml格式化",
+							url: "https://tool.oschina.net/codeformat/xml"
+						},
+						{
+							lazy: 1,
+							title: "二维码生成",
+							url: "./qrcode-generater/qr.html"
+						},
+						{
+							lazy: 1,
+							title: "16进制编辑器",
+							url: "https://hexed.it/"
+						},
+						{
+							title: "WS-Client",
+							url: "./my-tools/ws-echo-client.html"
+						},
+						//                     {
+						// lazy: 1,
+						//                         title: "cryptii",
+						//                         url: "https://cryptii.com/" //不支持在iframe中使用
+						//                     },
+						{
+							lazy: 1,
+							title: "GraphvizOnline",
+							url: "https://dreampuf.github.io/GraphvizOnline/#"
+						},
+						{
+							title: "web-text",
+							url: "./my-tools/web-text.html",
+						},
+						{
+							title: "url-shorter",
+							url: "https://t.nosays.com/index.html",
+						},
+						{
+							title: "flowchart",
+							url: "https://flowchart.fun/",
+						}
+					]
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>

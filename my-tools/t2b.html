@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Text to HexString</title>
+</head>
+
+<body>
+  <textarea cols="130" rows="20" onchange="transfer(this.value)"></textarea>
+  <div>
+    <button onclick="click1()" style="padding: 10px 20px;">复制结果</button>
+    <p id='resultInput' style='word-break: break-all; display:block;'></p>
+    <p id='urlencode' style='word-break: break-all; display:block;'></p>
+	<textarea id='textarea1' cols="1" rows="1"
+      style='border-style: none; resize: none; color: white; word-break: break-all; display:block;'></textarea>
+  </div>
+  <script>
+	  function byteCount(s) {
+	      return encodeURI(s).split(/%..|./).length - 1;
+	  }
+
+	  function click1() {
+      textarea1.select();
+      document.execCommand('copy');
+      // window.setTimeout(function () {
+      //   if (window.getSelection) {
+      //     window.getSelection().removeAllRanges();
+      //   } else if (document.selection) {
+      //     document.selection.empty();
+      //   }
+      // });
+    }
+	  
+      function transfer(val) {
+		  
+		  var result_str = val.split('').map(t => encode(t)).join('');
+	      var html = '============== '+byteCount(val)+'bytes ===============<p>'
+	      //    html += '<font color="red">'
+	      //    html += result_str + '<p>'
+	      //    html += '</font>'
+	      resultInput.innerHTML = html;
+      
+	      var resultInputChild = document.createElement('font');
+	      resultInputChild.color = 'red';
+	      resultInputChild.innerText = result_str;
+	      resultInput.appendChild(resultInputChild);
+	      resultInput.appendChild(document.createElement('p'));
+
+		  textarea1.value = result_str;
+		  
+		  var result_str = encodeURIComponent(val);
+	      var html = '============== URLEncode ===============<p>'
+	         // html += '<font color="red">'
+	         // html += result_urldec + '<p>'
+	         // html += '</font>'
+	      urlencode.innerHTML = html
+      
+	      //var result_str = 'gC%2BeuZB4GzIcnZuBj%2Bvqew%3D%3D11'
+	      var resultInputChild = document.createElement('font');
+	      resultInputChild.color = 'red';
+	      resultInputChild.innerText = result_str;
+	      urlencode.appendChild(resultInputChild);
+	      urlencode.appendChild(document.createElement('p'));
+      }
+
+      function encode(t) {
+          t = window.encodeURIComponent(t);
+          if (t.charAt(0) === '%') {
+              return t.replace(/%/g, '');
+          } else {
+              return t.charCodeAt(0).toString(16);
+          }
+      }
+  </script>
+</body>
+
+</html>
+
+
+

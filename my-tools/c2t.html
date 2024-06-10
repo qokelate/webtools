@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key-Value Formater(Cookie/Form)</title>
+</head>
+
+<body>
+    <textarea onchange="change(event)" cols="130" rows="20"></textarea>
+    <ul id="output"></ul>
+
+    <script>
+        function change(e) {
+            let val = e.target.value;
+//            val = val.split(';');
+            val = val.split(/;|&|\?/);
+            val.sort();
+            output.innerHTML = "";
+            val.forEach(t => {
+                let li = document.createElement('li');
+                li.innerText = t.trim()+';';
+                output.appendChild(li);
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JavaScript Runner</title>
+</head>
+
+<body>
+  <textarea id='code1' cols="130" rows="5" type="text">
+a={}
+  </textarea>
+  <textarea id='code2' cols="130" rows="20" type="text">
+//features:
+
+//jsonformat(xxx)
+//jsonparse(xxx)
+//showtext(xxx)
+//showhtml(xxx)
+//result.innerText = "xxx"
+//result.innerHTML = "xxx"
+
+showtext(jsonformat(a))
+  </textarea>
+  <div>
+    <button onclick="runcode()" style="padding: 10px 20px;">运行代码</button>
+    <button onclick="resetEnv()" style="padding: 10px 20px;">重置环境</button>
+    <button onclick="click1()" style="padding: 10px 20px;">复制结果</button>
+    <pre id='result' style='word-break: break-all; display:block;'></pre>
+    <textarea id='textarea1' cols="1" rows="1" 
+      style='border-style: none; resize: none; color: white; word-break: break-all; display:block;'>
+    </textarea>
+  </div>
+  <script>
+	  function byteCount(s) {
+      return (new TextEncoder().encode(s)).length;
+	  }
+
+    function resetEnv() {
+      window.location.reload();
+    }
+    function click1() {
+      textarea1.select();
+      document.execCommand('copy');
+    }
+
+    function jsonformat(obj) {
+      return JSON.stringify(obj, null, 2)
+    }
+
+    function jsonparse(obj) {
+      return JSON.parse(obj)
+    }
+
+    function showtext(obj) {
+      var val = '============== '+byteCount(obj)+'bytes ===============\n'+obj
+      result.innerHTML  = val
+      textarea1.value = obj;
+    }
+
+    function showhtml(obj) {
+      result.innerHTML = obj
+      textarea1.value = obj;
+    }
+
+    function runcode() {
+      try{
+        eval(code1.value + ';' + code2.value);
+      }
+      catch (e) {
+        result.innerHTML = e.toString();
+      }
+    }
+
+  </script>
+</body>
+
+</html>
